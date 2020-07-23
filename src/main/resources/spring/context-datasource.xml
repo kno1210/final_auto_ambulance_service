@@ -7,7 +7,7 @@
 		class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Dricer"/>
-		<property name="url" value="jdbc:mysql://192.1683.132:3306/auto_ambulance"/>
+		<property name="url" value="jdbc:mysql://192.168.3.183:3306/hospital"/>
 		<property name="username" value="root"/>
 		<property name="password" value="12345"/>
 		<property name="initialSize" value="5"/>
