@@ -44,6 +44,10 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+		<repository>
+	        <id>Eclipse Paho Repo</id>
+	        <url>https://repo.eclipse.org/content/repositories/paho-releases/</url>
+	    </repository>
 	</repositories>
 
 	<dependencies>
@@ -148,6 +152,18 @@
             <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/ojdbc-14.jar</systemPath>
         </dependency>
         -->        
+        <dependency>
+	        <groupId>org.eclipse.paho</groupId>
+	        <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+	        <version>1.2.0</version>
+	    </dependency>
+	    
+	    <!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+		    <groupId>org.json</groupId>
+		    <artifactId>json</artifactId>
+		    <version>20180813</version>
+		</dependency>
 	</dependencies>
 
 	<build>

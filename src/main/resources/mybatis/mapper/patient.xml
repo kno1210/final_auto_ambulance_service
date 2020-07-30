@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="patient">
+	<insert id="insert">
+		insert into patient (preportTime, preportTel, plocation, pname, psymptom, psex, page, pbloodType, pcarAssign)
+		values(#{preportTime}, #{preportTel}, #{plocation}, #{pname}, #{psymptom}, #{psex}, #{page}, #{pbloodType}, #{pcarAssign})
+	</insert>
 
-
+	<select id="selectCountByPcarAssign" resultType="int">
+		select count(*) from patient where pcarAssign=#{pcarAssign}
+	</select>
+	
+	<select id="selectListByPcarAssign" resultType="patient">
+		select * from patient where pcarAssign=#{pcarAssign}
+	</select>
 </mapper>
