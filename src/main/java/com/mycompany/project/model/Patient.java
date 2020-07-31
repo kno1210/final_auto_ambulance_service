@@ -10,7 +10,7 @@ public class Patient {
 	String pname; // 환자 이름 // 익명이라면 anonymous
 	String psymptom; // 증상
 	String psex; // 성별
-	int page; // 나이
+	String page; // 나이
 	String pbloodType; // 혈액형
 	String pcarAssign; // 차 할당유무
 	
@@ -62,10 +62,10 @@ public class Patient {
 	public void setPsex(String psex) {
 		this.psex = psex;
 	}
-	public int getPage() {
+	public String getPage() {
 		return page;
 	}
-	public void setPage(int page) {
+	public void setPage(String page) {
 		this.page = page;
 	}
 	public String getPbloodType() {

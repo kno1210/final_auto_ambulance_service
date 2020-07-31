@@ -1,6 +1,6 @@
 $(function() {
-//	client = new Paho.MQTT.Client(location.hostname, 61614, new Date().getTime().toString());
-	client = new Paho.MQTT.Client("192.168.3.183", 61614, new Date().getTime().toString());
+	client = new Paho.MQTT.Client(location.hostname, 61614, new Date().getTime().toString());
+//	client = new Paho.MQTT.Client("192.168.3.183", 61614, new Date().getTime().toString());
 
 	client.onMessageArrived = onMessageArrived;
 
@@ -12,13 +12,13 @@ function onConnect() {
 	console.log("연결");
 	client.subscribe("ambulance/#");
 	client.subscribe("/patientINFO");
+	client.subscribe("/giveMeSendPossible");
 }
 
 function onMessageArrived(message) {
 	console.log("message arrived");
 	if(message.destinationName == "ambulance/camera/frameLine") {
 		var cameraView = $("#cameraView").attr("src", "data:image/jpg;base64," + message.payloadString);
-		console.log("good!");
 	}
 	else if(message.destinationName == "/patientINFO") {
 		var patientInformation = JSON.parse(message.payloadString);
@@ -28,6 +28,18 @@ function onMessageArrived(message) {
 			data:patientInformation,
 			success:function(data){
 				window.alert("success");
+				//가장 상위에 있는 환자 데이터 가져오기 =====================================================================
+				var nowPatient = JSON.parse(data.nowPatient);
+				$("#pno").text(nowPatient.pno);
+				$("#preportTime").text(nowPatient.preportTime);
+				$("#plocation").text(nowPatient.plocation);
+				$("#pname").text(nowPatient.pname);
+				$("#psymptom").text(nowPatient.psymptom);
+				$("#pbloodType").text(nowPatient.pbloodType);
+				$("#psex").text(nowPatient.psex);
+				$("#page").text(nowPatient.page);
+				$("#preportTel").text(nowPatient.preportTel);
+				
 				var totalRows = data.totalRows;
 				if(totalRows > 0) {
 					var patientWating = String(totalRows-1);
@@ -52,7 +64,6 @@ function onMessageArrived(message) {
 				window.alert("fail");
 			}
 		})
-		/*count가 6이면 119에 그만 보내라고 메시지를 보내야함, count가 6보다 작으면 보내도 된다고 메시지를 보내야함*/
 	}
 	//차 컨트롤===========================================================
 	else if(message.destinationName == "ambulance/carControl") {
@@ -75,6 +86,36 @@ function onMessageArrived(message) {
 		}
 	}
 	//=====================================================================
+	
+	//119가 mqtt에 onConnect되자마자 publish를 해도 되는지 검사=====================================================================
+	else if(message.destinationName == "/giveMeSendPossible") {
+	  console.log("message arrived : /giveMeSendPossible");
+	  $.ajax({
+		  url:"sendPossible.do",
+		  type:"POST",
+		  success:function(data){
+			  var totalRows = data.totalRows;
+			  var value;
+			  if(totalRows >= 6) {
+				  value = "No Send";
+			  }else {
+				  value = "Yes Send";
+			  }
+			  var target = {
+					  value:value,
+					  totalRows:totalRows
+			  }
+			  message = new Paho.MQTT.Message(JSON.stringify(target));
+			  message.destinationName = "/sendPossible";
+			  client.send(message);
+			  console.log(message.payloadString);
+			  console.log("message send : sendPossible");
+		  },
+		  error:function(){
+			  console.log("ajax error");
+		  }
+	  })
+	}
 }
 
 var speed = 0;

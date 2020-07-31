@@ -17,7 +17,11 @@
       
       <script type="text/javascript" src="${pageContext.request.contextPath}/resource/js/mqttclient.js"></script>
       <link rel="stylesheet" href="${pageContext.request.contextPath}/resource/css/controltowerMain.css">
-      
+      <script type="text/javascript">
+      	function carStart() {
+      		
+      	}
+      </script>
    </head>
    <body>
       	<section id="wrap">
@@ -32,39 +36,39 @@
 						<table>
 							<tr>
 								<td>환자 번호</td>
-								<td>${nowPatient.pno}</td>
+								<td id="pno">${nowPatient.pno}</td>
 							</tr>
 							<tr>
 								<td>신고 접수 시간</td>
-								<td>${nowPatient.preportTime}</td>
+								<td id="preportTime">${nowPatient.preportTime}</td>
 							</tr>
 							<tr>
 								<td>환자 위치</td>
-								<td>${nowPatient.plocation}</td>
+								<td id="plocation">${nowPatient.plocation}</td>
 							</tr>
 							<tr>
 								<td>환자 이름</td>
-								<td>${nowPatient.pname}</td>
+								<td id="pname">${nowPatient.pname}</td>
 							</tr>
 							<tr>
 								<td>증상</td>
-								<td>${nowPatient.psymptom}</td>
+								<td id="psymptom">${nowPatient.psymptom}</td>
 							</tr>
 							<tr>
 								<td>혈액형</td>
-								<td>${nowPatient.pbloodType}</td>
+								<td id="pbloodType">${nowPatient.pbloodType}</td>
 							</tr>
 							<tr>
 								<td>성별</td>
-								<td>${nowPatient.psex}</td>
+								<td id="psex">${nowPatient.psex}</td>
 							</tr>
 							<tr>
 								<td>나이</td>
-								<td>${nowPatient.page}</td>
+								<td id="page">${nowPatient.page}</td>
 							</tr>
 							<tr>
 								<td>신고자 전화번호</td>
-								<td>${nowPatient.preportTel}</td>
+								<td id="preportTel">${nowPatient.preportTel}</td>
 							</tr>
 						</table>
 					</div>
@@ -72,6 +76,9 @@
 				</section>
 				<section id="menu2">
 					<div id="content3">지도 Map</div>
+					<div>
+						<button onclick="carStart()">응급차 출발</button>
+					</div>
 				</section>
 			</section>
       		
