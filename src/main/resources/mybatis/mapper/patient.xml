@@ -13,4 +13,20 @@
 	<select id="selectListByPcarAssign" resultType="patient">
 		select * from patient where pcarAssign=#{pcarAssign}
 	</select>
+	
+	<select id="selectByPno" resultType="patient">
+		select * from patient where pno=#{pno}
+	</select>
+	
+	<select id="selectByPcarAssign" resultType="patient">
+		select * from patient where pcarAssign=#{pcarAssign}
+	</select>
+	
+	<update id="updatePcarAssign">
+		update patient set pcarAssign=#{pcarAssign} where pno=#{pno}
+	</update>
+	
+	<delete id="deleteByPno">
+		delete from patient where pno=#{pno}
+	</delete>
 </mapper>

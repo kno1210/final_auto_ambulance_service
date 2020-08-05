@@ -13,10 +13,52 @@
       <script src="${pageContext.request.contextPath}/resource/bootstrap/js/bootstrap.min.js"></script>
       <link rel="stylesheet" href="${pageContext.request.contextPath}/resource/jquery-ui/jquery-ui.min.css">
       <script src="${pageContext.request.contextPath}/resource/jquery-ui/jquery-ui.min.js"></script>
-      
       <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
-      <script type="text/javascript" src="${pageContext.request.contextPath}/resource/js/mqttclient.js"></script>
+      
+      <script type="text/javascript" src="${pageContext.request.contextPath}/resource/js/mqttclientAmbulance.js"></script>
       <link rel="stylesheet" href="${pageContext.request.contextPath}/resource/css/ambulanceMain.css">
+      <script type="text/javascript">
+      	/* 전역 변수로 선언해주기 */
+      	var dispatchPossible;
+      	
+      	function convoyEnd() {
+      		dispatchPossible = "possible";
+      		var pno = Number($("#pno").text());
+      		console.log(pno);
+      		if(pno == 0) {
+      			window.alert("호송중인 환자가 없습니다만?");
+      		}else {
+      			$.ajax({
+          			url:"convoyEnd.do",
+          			type:"POST",
+          			data:{
+          				pno:pno
+          			},
+          			success:function() {
+          				$("#pno").text("");
+          				$("#preportTime").text("");
+          				$("#preportTel").text("");
+          				$("#plocation").text("");
+          				$("#pname").text("");
+          				$("#psymptom").text("");
+          				$("#psex").text("");
+          				$("#page").text("");
+          				$("#pbloodType").text("");
+          				
+          				dispatchPossible = "possible";
+          				message = new Paho.MQTT.Message(dispatchPossible);
+          				message.destinationName = "/dispatchPossible";
+          				client.send(message);
+          			},
+          			error:function() {
+          				window.alert("error : convoyEnd.do");
+          			}
+          		})
+      		}
+      		
+      	}
+      </script>
+
    </head>
    <body>
       	<section id="wrap">
@@ -24,28 +66,47 @@
       		<header>
       			<strong class="logo_box" ><img alt="응급차량 제어" src="${pageContext.request.contextPath}/resource/img/ambulanceMainLogo.png"></strong>
       		</header>
-			<!--       			// 이 클래스가 접수가 들어온 환자의 정보를 담는 클래스일 경우
-				int pno; // 환자 번호
-				String preportTime; // 신고 시간 // sdf로 String으로 저장
-				String preportTel; // 신고를 한 번호
-				String plocation; // 환자 위치
-				String pname; // 환자 이름 // 익명이라면 anonymous
-				String psymptom; // 증상
-				char psex; // 성별
-				int page; // 나이
-				String pbloodType; // 혈액형 -->
 			<section id="container">
 				<section id="menu1">
 					<div id="content1">
-						<p>patientNo : </p><br/>
-						<p>patientReportTime : </p><br/>
-						<p>patientReportTel : </p><br/>
-						<p>patientLocation : </p><br/>
-						<p>patientName : </p><br/>
-						<p>patientSymptom : </p><br/>
-						<p>patientSex : </p><br/>
-						<p>patientAge : </p><br/>
-						<p>patientBloodType : </p><br/>
+						<table>
+							<tr>
+								<td class="patientKey">환자 번호</td>
+								<td id="pno" class="patientValue">${movingPatient.pno}</td>
+							</tr>
+							<tr>
+								<td class="patientKey">신고 접수 시간</td>
+								<td id="preportTime" class="patientValue">${movingPatient.preportTime}</td>
+							</tr>
+							<tr>
+								<td class="patientKey">환자 위치</td>
+								<td id="plocation" class="patientValue">${movingPatient.plocation}</td>
+							</tr>
+							<tr>
+								<td class="patientKey">환자 이름</td>
+								<td id="pname" class="patientValue">${movingPatient.pname}</td>
+							</tr>
+							<tr>
+								<td class="patientKey">증상</td>
+								<td id="psymptom" class="patientValue">${movingPatient.psymptom}</td>
+							</tr>
+							<tr>
+								<td class="patientKey">혈액형</td>
+								<td id="pbloodType" class="patientValue">${movingPatient.pbloodType}</td>
+							</tr>
+							<tr>
+								<td class="patientKey">성별</td>
+								<td id="psex" class="patientValue">${movingPatient.psex}</td>
+							</tr>
+							<tr>
+								<td class="patientKey">나이</td>
+								<td id="page" class="patientValue">${movingPatient.page}</td>
+							</tr>
+							<tr>
+								<td class="patientKey">신고자 전화번호</td>
+								<td id="preportTel" class="patientValue">${movingPatient.preportTel}</td>
+							</tr>
+						</table>
 					</div>
 				</section>
 				<section id="menu2">
@@ -55,10 +116,8 @@
 				</section>
 				<section id="menu3">
 					<div id="content3">Track</div>
-					<div id="batteryView">
-						<div id="batteryStatus"></div>
-						<!-- <div id="batteryAlert"></div> -->
-						<span id="batteryAlert" style="color:red"></span>
+					<div>
+						<button onclick="convoyEnd()">호송 종료</button>
 					</div>
 				</section>
 			</section>

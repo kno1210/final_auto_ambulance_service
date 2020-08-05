@@ -31,5 +31,13 @@ public class ControltowerService {
 		return patientList;
 	}
 
+	public Patient getPatientByPno(int intNowPatientNo) {
+		Patient patient = controltowerDao.selectByPno(intNowPatientNo);
+		return patient;
+	}
+
+	public void updatePcarAssign(Patient patient) {
+		controltowerDao.updatePcarAssign(patient);
+	}
 
 }

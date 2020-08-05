@@ -34,11 +34,16 @@ public class ControltowerController {
 	public String main(Model model) {
 		LOGGER.info("컨트롤타워 메인페이지");
 		List<Patient> patientList = controltowerService.getPatientListByPcarAssign("nothing");
+		boolean isNowPatient;
 		if(patientList.size() > 0) {
 			model.addAttribute("nowPatient", patientList.get(0));
 			int patientWaiting = patientList.size() - 1;
 			model.addAttribute("patientWating", patientWaiting);
+			isNowPatient = true;
+		}else {
+			isNowPatient = false;
 		}
+		model.addAttribute("isNowPatient", isNowPatient);
 		return "controltower/main";
 	}
 	
@@ -68,8 +73,10 @@ public class ControltowerController {
 		patient.setPcarAssign("nothing");
 		controltowerService.savePatient(patient);
 		
-//		count가 6이면 119에 그만보내라고 메시지를 보내야함, count가 6보다 작으면 더 보내도 된다고 메시지를 보내야함
+		JSONObject jsonObejct = new JSONObject();
+		
 		int totalRows = controltowerService.selectCountByPcarAssign("nothing");
+		jsonObejct.put("totalRows", totalRows);
 		
 		List<Patient> patientList = controltowerService.getPatientListByPcarAssign("nothing");
 		Patient nowPatient = patientList.get(0);
@@ -85,9 +92,6 @@ public class ControltowerController {
 		nowPatientJson.put("page", nowPatient.getPage());
 		nowPatientJson.put("pbloodType", nowPatient.getPbloodType());
 		String json = nowPatientJson.toString();
-		
-		JSONObject jsonObejct = new JSONObject();
-		jsonObejct.put("totalRows", totalRows);
 		jsonObejct.put("nowPatient", json);
 		
 		response.setContentType("application/json; charset=UTF-8");
@@ -97,4 +101,38 @@ public class ControltowerController {
 		pw.close();
 	}
 
+	@PostMapping("carStart.do")
+	public void carStart(HttpServletResponse response, String nowPatientNo) throws IOException {
+		int intNowPatientNo = Integer.parseInt(nowPatientNo);
+		Patient patient = controltowerService.getPatientByPno(intNowPatientNo);
+		patient.setPcarAssign("car");
+		controltowerService.updatePcarAssign(patient);
+		
+		JSONObject jsonObejct = new JSONObject();
+		int totalRows = controltowerService.selectCountByPcarAssign("nothing");
+		jsonObejct.put("totalRows", totalRows);
+		if(totalRows != 0) {
+			List<Patient> patientList = controltowerService.getPatientListByPcarAssign("nothing");
+			Patient nowPatient = patientList.get(0);
+			
+			JSONObject nowPatientJson = new JSONObject();
+			nowPatientJson.put("pno", nowPatient.getPno());
+			nowPatientJson.put("preportTime", nowPatient.getPreportTime());
+			nowPatientJson.put("preportTel", nowPatient.getPreportTel());
+			nowPatientJson.put("plocation", nowPatient.getPlocation());
+			nowPatientJson.put("pname", nowPatient.getPname());
+			nowPatientJson.put("psymptom", nowPatient.getPsymptom());
+			nowPatientJson.put("psex", nowPatient.getPsex());
+			nowPatientJson.put("page", nowPatient.getPage());
+			nowPatientJson.put("pbloodType", nowPatient.getPbloodType());
+			String json = nowPatientJson.toString();
+			jsonObejct.put("nowPatient", json);
+		}
+		
+		response.setContentType("application/json; charset=UTF-8");
+		PrintWriter pw = response.getWriter();
+		pw.write(jsonObejct.toString());
+		pw.flush();
+		pw.close();
+	}
 }

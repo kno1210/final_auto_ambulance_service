@@ -28,4 +28,14 @@ public class ControltowerDao extends EgovAbstractMapper {
 		return patientList;
 	}
 
+	public Patient selectByPno(int intNowPatientNo) {
+		Patient patient = selectOne("patient.selectByPno", intNowPatientNo);
+		return patient;
+	}
+
+	public void updatePcarAssign(Patient patient) {
+		update("patient.updatePcarAssign", patient);
+	}
+
+	
 }
