@@ -75,4 +75,9 @@ public class AmbulanceController {
 	public void convoyEnd(int pno) {
 		ambulanceService.drop(pno);
 	}
+	
+	@RequestMapping("/test.do")
+	public String test() {
+		return "ambulance/test";
+	}
 }

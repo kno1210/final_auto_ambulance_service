@@ -19,7 +19,17 @@
 <body>
 	<h5 class="alert alert-info">/main.jsp</h5>
 	
-	<a href="${pageContext.request.contextPath}/controltower/main.do">컨트롤 타워</a>
-	<a href="${pageContext.request.contextPath}/ambulance/main.do">차량 제어</a>
+	<ul>
+		<li><a href="${pageContext.request.contextPath}/controltower/main.do">컨트롤 타워</a></li>
+		<li><a href="${pageContext.request.contextPath}/ambulance/main.do">차량1 제어</a></li>
+		<li><a href="${pageContext.request.contextPath}/ambulance/main.do" >차량2 제어</a></li>
+		
+		<!-- 실제로는 관리자만 접근가능하게 -->
+		<li><a href="${pageContext.request.contextPath}/employee/registerForm.do">사원 등록</a></li>
+		
+		<!-- 실제로는 로그인을 해야 차량제어나 컨트롤 타워로 넘어갈 수 있음 -->
+		<li><a href="${pageContext.request.contextPath}/employee/loginForm.do">로그인</a></li>
+		<li><a href="${pageContext.request.contextPath}/ambulance/test.do">테스트</a></li>
+	</ul>
 </body>
 </html>
