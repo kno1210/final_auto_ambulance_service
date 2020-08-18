@@ -3,15 +3,20 @@ function getContextPath() {
 	var hostIndex = location.href.indexOf(location.host) + location.host.length;
 	return location.href.substring(hostIndex, location.href.indexOf('/', hostIndex + 1));
 };
-
-var contextPath = getContextPath();
 //=================================================
 
-//차의 상태
-//대기 중 : wait
-//이송 중 : transport
-//정비 필요 : overhaul
-var ambulanceStatus = "wait";
+//전역변수=========================================
+var contextPath = getContextPath();
+var imgPath = contextPath + "/resource/images";
+var statuses = {
+		battery:0,
+		mode:0,
+		direction:"stop",
+		speed:0,
+		angle:0,
+		working:false
+};
+//=================================================
 
 $(function() {
 	client = new Paho.MQTT.Client(location.hostname, 61614, new Date().getTime().toString());
@@ -33,6 +38,26 @@ function onConnect() {
 	
 	/**/
 	client.subscribe("ambulance/#");
+	
+//	console.log("car:" + ambulanceStatus);
+	/* 연결되자마자 서버에서 차의 주행 상태 가져오기 */
+	/*$.ajax({
+		url:"carStatus.do",
+		type:"POST",
+		data:{ambulanceStatus:ambulanceStatus},
+		success:function(data) {
+			ambulanceStatus = data.carSt;
+			console.log("성공:" + ambulanceStatus);
+		},
+		error:function() {
+			console.log("실패");
+		}
+	});*/
+	
+	/* 연결되자마자 차에 주행 상태 요청하기 */
+	message = new Paho.MQTT.Message("Send Me Driving Status of the Car.");
+	message.destinationName = "car/" + carNo + "/drivingStatus";
+	client.send(message);
 }
 
 var movingPatient;
@@ -88,47 +113,41 @@ function onMessageArrived(message) {
 		})
 	}
 	//카메라 영상 출력=====================================================
-	else if(message.destinationName == "ambulance/camera/frameLine") {
-		var cameraView = $("#cameraView").attr("src", "data:image/jpg;base64," + message.payloadString);
-		console.log("line!");
-	}
-	
-	else if(message.destinationName == "ambulance/camera/frameDetect") {
-		var objectView = $("#objectView").attr("src", "data:image/jpg;base64," + message.payloadString);
-		console.log("object!");
+	else if(message.destinationName == "ambulance/" + carNo + "/camera/frameLine") {
+		//var cameraView = $("#cameraView").attr("src", "data:image/jpg;base64," + message.payloadString);
+		cam.src = "data:image/jpg;base64," + message.payloadString;
+//		console.log("토픽 : " + message.destinationName);
 	}
 	//=====================================================================
 	
 	//차 컨트롤============================================================
 	//=====================================================================
 	
-	//배터리 상태 수신=====================================================
-	else if(message.destinationName == "ambulance/battery/status") {
-		var batteryStatus = JSON.parse(message.payloadString);
-		console.log("배터리 : " + batteryStatus);
-		$("#batteryAlert").html("");
-		$("#batteryStatus").html("배터리 잔량 : " + batteryStatus + "%");
-		if(batteryStatus > 80) { //81~ 100 //5칸
-			$("#batteryImage").attr("src", contextPath + "/resource/img/battery_100.png");
-		}
-		else if(batteryStatus > 60) { //61~ 80 //4칸
-			$("#batteryImage").attr("src", contextPath + "/resource/img/battery_80.png");
-		}
-		else if(batteryStatus > 40) { //41~ 60 //3칸
-			$("#batteryImage").attr("src", contextPath + "/resource/img/battery_60.png");
-		}
-		else if(batteryStatus > 20) { //21~ 40 //2칸
-			$("#batteryImage").attr("src", contextPath + "/resource/img/battery_40.png");
-		}
-		else if(batteryStatus > 10) { //11~ 20 //1칸
-			$("#batteryImage").attr("src", contextPath + "/resource/img/battery_20.png");
-		}
-		else if(batteryStatus <= 10) { //0~ 10 //빨간칸
-			$("#batteryAlert").html("배터리 충전 필요!!");
-			$("#batteryImage").attr("src", contextPath + "/resource/img/battery_10.png");
-			ambulanceStatus = "overhaul";
-		}
+	//차 상태를 달라는 요청================================================
+	//=====================================================================
+	
+	//차 상태를 받는 토픽==================================================
+	else if(message.destinationName == "ambulance/" + carNo + "/status") {
+		statuses = JSON.parse(message.payloadString);
+		console.log(statuses);
+		
+		//배터리
+		battery(statuses.battery);
+		
+		//자동-수동 주행
+		
+		//방향
+		
+		//속도
+		
+		//각도
+		
+		//이송중/완료
+		
 	}
+	//=====================================================================
+	
+	//컨트롤타워에 차 상태 보내주기============================
 	//=====================================================================
 }
 
@@ -147,21 +166,67 @@ function autoModeSwitch(id) {
 //=========================================================================
 
 //현재 운행 상태 바꾸기====================================================
-function drivingStatusSwitch(id) {
+/*function drivingStatusSwitch(id) {
+	var drivingStatus = $("#drivingStatus");
 	if(id == "start") { //출발 버튼이니까 이송중으로 상태 바꾸기
 		ambulanceStatus = "transport";
+		drivingStatus.html("이송 중");
 	}
 	else if(id == "finish") { //완료 버튼이니까 대기중으로 상태 바꾸기
 		ambulanceStatus = "wait";
+		drivingStatus.html("대기 중");
 	}
-}
+	
+	$.ajax({
+		url:"carStatus.do",
+		type:"POST",
+		data:{ambulanceStatus:ambulanceStatus},
+		success:function(data) {
+			ambulanceStatus = data.carSt;
+			console.log("성공:" + ambulanceStatus);
+		},
+		error:function() {
+			console.log("실패");
+		}
+	});
+}*/
 //=========================================================================
 
 //차 상태 컨트롤 타워로 전송===============================================
-function sendStatus() {
-	message = new Paho.MQTT.Message(ambulance);
-	message.destination = "controltower/ambulanceStatus";
-	client.send(message);
+//function sendStatus() {
+//	message = new Paho.MQTT.Message(ambulance);
+//	message.destination = "controltower/ambulanceStatus";
+//	client.send(message);
+//}
+//=========================================================================
+
+//배터리===================================================================
+function battery(batteryData) {
+	if(batteryData > 80) { //81~ 100 //5칸
+//		batteryImage.attr("src", imgPath + "/battery_100.png");
+		bat.src = imgPath + "/battery_100.png";
+	}
+	else if(batteryData > 60) { //61~ 80 //4칸
+//		batteryImage.attr("src", imgPath + "/battery_80.png");
+		bat.src = imgPath + "/battery_80.png";
+	}
+	else if(batteryData > 40) { //41~ 60 //3칸
+//		batteryImage.attr("src", imgPath + "/battery_60.png");
+		bat.src = imgPath + "/battery_60.png";
+	}
+	else if(batteryData > 20) { //21~ 40 //2칸
+//		batteryImage.attr("src", imgPath + "/battery_40.png");
+		bat.src = imgPath + "/battery_40.png";
+	}
+	else if(batteryData > 10) { //11~ 20 //1칸
+//		batteryImage.attr("src", imgPath + "/battery_20.png");
+		bat.src = imgPath + "/battery_20.png";
+	}
+	else if(batteryData <= 10) { //0~ 10 //빨간칸
+//		batteryAlert.html("배터리 충전 필요!!");
+//		batteryImage.attr("src", imgPath + "/battery_10(1).png");
+		bat.src = imgPath + "/battery_10(1).png";
+	}
 }
 //=========================================================================
 
@@ -176,12 +241,12 @@ function onkeydown_handler(event) {
 		if(keycode == 37) {
 			//left
 			$("#left").css("background-color", "green");
-			var topic = "command/frontTire/left";
+			var topic = "command/" + carNo + "/frontTire/left";
 			console.log(topic);
 		}else if(keycode == 39) {
 			//right
 			$("#right").css("background-color", "green");
-			topic = "command/frontTire/right";
+			topic = "command/" + carNo + "/frontTire/right";
 			console.log(topic);
 		}
 		message = new Paho.MQTT.Message("frontTire");
@@ -192,20 +257,42 @@ function onkeydown_handler(event) {
 		if(keycode == 38) {
 			// up
 			$("#up").css("background-color", "green");
-			var topic = "command/backTire/forward";
+			var topic = "command/" + carNo + "/backTire/forward";
 		} else if(keycode == 40) {
 			// down
 			$("#down").css("background-color", "green");
-			var topic = "command/backTire/backward";
+			var topic = "command/" + carNo + "/backTire/backward";
 		} else if(keycode == 32) {
 			//spacebar
 			stopped = true;
-			var topic = "command/backTire/stop";
+			var topic = "command/" + carNo + "/backTire/stop";
 		}
 		message = new Paho.MQTT.Message("backTire");
 		message.destinationName = topic;
 		client.send(message);
 	}
+	
+	if(keycode == 69) {
+        message = new Paho.MQTT.Message("process_stop");
+        message.destinationName = "command/" + carNo + "/process/stop";
+        client.send(message);
+     }
+	
+	if(keycode == 65) {
+        message = new Paho.MQTT.Message("AUTO_MODE");
+        message.destinationName = "command/" + carNo + "/changemode/auto";
+        client.send(message);
+     }
+     if(keycode == 77) {
+        message = new Paho.MQTT.Message("MANUAL_MODE");
+        message.destinationName = "command/"+ carNo + "/changemode/manual";
+        client.send(message);
+     }
+     if(keycode == 67) {
+         message = new Paho.MQTT.Message("CHANGE_ROAD");
+         message.destinationName = "command/" + carNo + "/road/change";
+         client.send(message);
+      }
 }
 
 function onkeyup_handler(event) {
@@ -213,18 +300,18 @@ function onkeyup_handler(event) {
 	if(keycode == 37 || keycode == 39) {
 		$("#left").css("background-color", "");
 		$("#right").css("background-color", "");
-		var topic = "command/frontTire/front";
+		var topic = "command/" + carNo + "/frontTire/front";
 		message = new Paho.MQTT.Message("frontTire");
 		message.destinationName = topic;
 		client.send(message);
 	}
-	/*if(keycode == 38 || keycode == 40) {
+	if(keycode == 38 || keycode == 40) {
 		$("#up").css("background-color", "");
 		$("#down").css("background-color", "");
-		var topic = "command/backTire/stop";
+		var topic = "command/" + carNo + "/backTire/stop";
 		message = new Paho.MQTT.Message("backTire");
 		message.destinationName = topic;
 		client.send(message);
-	}*/
+	}
 }
 //=========================================================================

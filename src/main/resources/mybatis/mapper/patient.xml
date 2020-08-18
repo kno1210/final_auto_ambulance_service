@@ -3,7 +3,7 @@
 <mapper namespace="patient">
 	<insert id="insert">
 		insert into patient (preportTime, preportTel, plocation, pname, psymptom, psex, page, pbloodType, pcarAssign)
-		values(#{preportTime}, #{preportTel}, #{plocation}, #{pname}, #{psymptom}, #{psex}, #{page}, #{pbloodType}, #{pcarAssign})
+		values (#{preportTime}, #{preportTel}, #{plocation}, #{pname}, #{psymptom}, #{psex}, #{page}, #{pbloodType}, #{pcarAssign})
 	</insert>
 
 	<select id="selectCountByPcarAssign" resultType="int">

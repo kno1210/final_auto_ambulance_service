@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -25,12 +26,18 @@ public class AmbulanceController {
 	
 	@Autowired
 	private AmbulanceService ambulanceService;
+	private String carSt = "";
 		
 	@RequestMapping("/main.do")
-	public String main(Model model) {
+	public String main(Model model, int carNo) {
 		LOGGER.info("Ambulance main 메소드 실행");
-		Patient movingPatient = ambulanceService.getPatientByPcarAssign("car");
-		model.addAttribute("movingPatient", movingPatient);
+//		Patient movingPatient = ambulanceService.getPatientByPcarAssign("car");
+//		model.addAttribute("movingPatient", movingPatient);
+		//==============================================================================
+		Patient patient = ambulanceService.getPatientByPcarAssign("car1");
+		model.addAttribute("patient", patient);
+		model.addAttribute("carNo", carNo);
+		
 		return "ambulance/main";
 	}
 	
@@ -79,5 +86,24 @@ public class AmbulanceController {
 	@RequestMapping("/test.do")
 	public String test() {
 		return "ambulance/test";
+	}
+	
+	@RequestMapping("/carStatus.do")
+	public void carStatus(String ambulanceStatus, HttpServletResponse res, HttpSession session) throws IOException
+	{
+		//String carSt = "overhaul";
+//		LOGGER.info("am:" + ambulanceStatus);
+//		LOGGER.info("session:{}", session.getAttribute("sessionTest"));
+//		if(!ambulanceStatus.equals("")) { //""가 아니면
+//			carSt = ambulanceStatus;
+//		}
+		session.setAttribute("result", "ok");
+		res.setContentType("application/json; charset=UTF-8");
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("carSt", carSt);
+		PrintWriter pw = res.getWriter();
+		pw.write(jsonObject.toString());
+		pw.flush();
+		pw.close();
 	}
 }

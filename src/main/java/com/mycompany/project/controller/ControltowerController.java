@@ -44,6 +44,7 @@ public class ControltowerController {
 			isNowPatient = false;
 		}
 		model.addAttribute("isNowPatient", isNowPatient);
+		
 		return "controltower/main";
 	}
 	
@@ -135,4 +136,33 @@ public class ControltowerController {
 		pw.flush();
 		pw.close();
 	}
+	
+	@RequestMapping("/patientInfo.do")
+	public void patientInfo(@RequestParam Map<String, String> patientInfo, HttpServletResponse response) throws IOException
+	{
+		LOGGER.info("실행");
+		Patient patient = new Patient();
+		patient.setPreportTime(patientInfo.get("preportTime"));
+		patient.setPreportTel(patientInfo.get("preportTel"));
+		patient.setPlocation(patientInfo.get("plocation"));
+		patient.setPname(patientInfo.get("pname"));
+		patient.setPsymptom(patientInfo.get("psymptom"));
+		patient.setPsex(patientInfo.get("psex"));
+		patient.setPage(patientInfo.get("page"));
+		patient.setPbloodType(patientInfo.get("pbloodType"));
+		patient.setPcarAssign(patientInfo.get("pcarAssign"));
+		
+		controltowerService.savePatient(patient);
+		
+		String result = "ok";
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("result", result);
+		response.setContentType("application/json; charset=UTF-8");
+		PrintWriter pw = response.getWriter();
+		pw.write(jsonObject.toString());
+		pw.flush();
+		pw.close();
+	}
+	
+	
 }

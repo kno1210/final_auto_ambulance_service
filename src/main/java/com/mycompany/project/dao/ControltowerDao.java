@@ -15,7 +15,8 @@ public class ControltowerDao extends EgovAbstractMapper {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ControltowerDao.class);
 	
 	public void insert(Patient patient) {
-		insert("patient.insert", patient);	
+		LOGGER.info("실행");
+		insert("patient.insert", patient);
 	}
 
 	public int selectCountByPcarAssign(String pcarAssign) {

@@ -16,4 +16,22 @@ public class HomeController {
 		return "home/main";
 	}
 	
+	@RequestMapping("/canvas.do")
+	public String canvas()
+	{
+		return "home/canvas";
+	}
+	
+	@RequestMapping("/test.do")
+	public String test()
+	{
+		return "home/test";
+	}
+	
+	@RequestMapping("/login_test.do")
+	public String login_test()
+	{
+		return "home/login_test";
+	}
+	
 }

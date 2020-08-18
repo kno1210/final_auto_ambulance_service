@@ -18,6 +18,7 @@ public class ControltowerService {
 	private ControltowerDao controltowerDao;
 	
 	public void savePatient(Patient patient) {
+		LOGGER.info("실행");
 		controltowerDao.insert(patient);
 	}
 
