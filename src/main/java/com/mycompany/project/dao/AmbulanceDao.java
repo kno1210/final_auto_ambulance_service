@@ -25,4 +25,9 @@ public class AmbulanceDao extends EgovAbstractMapper {
 		Patient patient = selectOne("patient.selectByPcarAssign", string);
 		return patient;
 	}
+	
+	public void deletePatientRow(int intPatientNo) {
+		int pno = intPatientNo;
+		delete("patient.deleteByPno", pno);
+	}
 }

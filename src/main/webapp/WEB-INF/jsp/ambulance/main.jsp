@@ -155,8 +155,11 @@
      
 		<div class="card" id="map">
 		 <div class="card-header">맵 뷰</div>
-		 <div class="card-body">
-			<img id="mapView" src="${pageContext.request.contextPath}/resource/images/map sample.png">
+		 <div class="card-body" id="canvasDiv">
+			<canvas id="canvasMap"></canvas>
+		 	<canvas id="canvasPath"></canvas>
+		 	<canvas id="canvasPatient"></canvas>
+		 	<canvas id="canvasCar"></canvas>
 		 </div>
 		</div>
 
@@ -211,6 +214,79 @@
   <script src="${pageContext.request.contextPath}/resource/js/app-script.js"></script>
  
  <script>
+ 	// 지도 그리기와 관련된 코드 (~288)
+ 	var canvasMap = document.getElementById("canvasMap");
+ 	var canvasPatient = document.getElementById("canvasPatient");
+ 	var canvasCar = document.getElementById("canvasCar");
+ 	var canvasPath = document.getElementById("canvasPath");
+ 	
+ 	canvasMap.width = 607;
+ 	canvasMap.height = 470;
+	canvasMap.style.position = "absolute";
+	canvasPatient.width = 607;
+	canvasPatient.height = 470;
+	canvasPatient.style.position = "absolute";
+	canvasCar.width = 607;
+	canvasCar.height = 470;
+	canvasCar.style.position = "absolute";
+	canvasPath.width = 607;
+	canvasPath.height = 470;
+	canvasPath.style.position = "absolute";
+	
+	var ctxMap = canvasMap.getContext("2d");
+	var ctxCar = canvasCar.getContext("2d");
+	var ctxPatient = canvasPatient.getContext("2d");
+	var ctxPath = canvasPath.getContext("2d");
+	
+	var mapArea = new mapArea(ctxMap, ctxCar, ctxPatient, ctxPath, 0, 0);
+	mapArea.readyDrawCar("red", 7);
+	mapArea.drawTrack();
+	
+	var position = "";
+	var carLocX;
+	var carLocY;
+	var patientLoc = "";
+	
+	patientLoc = document.getElementById("plocation").innerHTML;
+	var index2;
+	
+	if(patientLoc == "A") {
+		index2 = 0;
+	}else if(patientLoc == "B") {
+		index2 = 1;
+	}else if(patientLoc == "C") {
+		index2 = 2;
+	}else if(patientLoc == "D") {
+		index2 = 3;
+	}else if(patientLoc == "E") {
+		index2 = 4;
+	}else if(patientLoc == "F") {
+		index2 = 5;
+	}else if(patientLoc == "H") {
+		index2 = 6;
+	}else if(patientLoc == "I") {
+		index2 = 7;
+	}else if(patientLoc == "J") {
+		index2 = 8;
+	}else if(patientLoc == "K") {
+		index2 = 9;
+	}else if(patientLoc == "M") {
+		index2 = 10;
+	}else if(patientLoc == "N") {
+		index2 = 11;
+	}else if(patientLoc == "P") {
+		index2 = 12;
+	}else if(patientLoc == "S") {
+		index2 = 13;
+	}else if(patientLoc == "T") {
+		index2 = 14;
+	}
+	var destinationNo = index2;
+	mapArea.setPatientLocation(index2);
+	mapArea.drawPatient();
+ 
+ /////////////////////////////////////////////////////// 
+	
  	var cameraLayer = document.getElementById("cameraView");
  	cameraLayer.width = 1200;
  	cameraLayer.height = 900;
@@ -259,7 +335,30 @@
  			sirenCtx.clearRect(0, 0, sirenLayer.width, sirenLayer.height);
  			sirenCtx.drawImage(sir, 100, 100, 70, 70);
  		} */
+ 		
+		// 현재시간
+		drawTime();
+ 		
+ 		// 현재 위치
+ 		controllerCtx.fillText("현재 위치 : " + position, 1000, 700);
+ 		// 환자 위치
+ 		controllerCtx.fillText("환자 위치 : " + patientLoc, 1000, 750);
+ 		
  	};
+ 	
+ 	// 시간 그리기
+ 	function drawTime() {
+ 		var now = new Date();
+        var hour = now.getHours();
+        var minute = now.getMinutes();
+        var ampm;
+        if(hour>=12) {ampm = "pm";}
+        else {ampm = "am"}
+        if(hour>=13) {hour = hour - 12;}
+        if(hour<10) {hour = "0" + hour;}
+        if(minute < 10) {minute = "0" + minute;}
+        controllerCtx.fillText(hour + " : " + minute + " " + ampm, 540, 50);
+ 	}
  	
  	function sirenOn() {
   		//사이렌 온

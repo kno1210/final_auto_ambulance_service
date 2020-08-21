@@ -28,4 +28,8 @@ public class AmbulanceService {
 		Patient patient = ambulanceDao.selectByPcarAssign(string);
 		return patient;
 	}
+	
+	public void deletePatientRow(int intPatientNo) {
+		ambulanceDao.deletePatientRow(intPatientNo);
+	}
 }

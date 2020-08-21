@@ -106,4 +106,19 @@ public class AmbulanceController {
 		pw.flush();
 		pw.close();
 	}
+	
+	@RequestMapping("deletePatient.do")
+	public void deletePatient(String patientNo, HttpServletResponse response) throws IOException {
+		int intPatientNo = Integer.parseInt(patientNo);
+		ambulanceService.deletePatientRow(intPatientNo);
+		
+		response.setContentType("application/json; charset=UTF-8");
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("data", "data");
+		PrintWriter pw = response.getWriter();
+		pw.write(jsonObject.toString());
+		pw.flush();
+		pw.close();
+	}
+	
 }
