@@ -1,11 +1,23 @@
-var carStatuses = [];
+var statuses = [
+	{
+		battery:0,
+		mode:0,
+		direction:"stop",
+		speed:0,
+		angle:0,
+		working:true
+	},
+	{
+		battery:0,
+		mode:0,
+		direction:"stop",
+		speed:0,
+		angle:0,
+		working:false
+	}
+];
 
-function createMessage(msg, topic) {
-	
-	message = new Paho.MQTT.Message(msg);
-	message.destinationName = topic;
-	return message;
-}
+var waitingCnt = 0;
 
 $(function() {
 	client = new Paho.MQTT.Client(location.hostname, 61614, new Date().getTime().toString());
@@ -13,8 +25,54 @@ $(function() {
 
 	client.onMessageArrived = onMessageArrived;
 
-	client.connect({onSuccess:onConnect});
+	client.connect({
+		onSuccess:onConnect,
+		cleanSession:true
+	});
 });
+
+//메시지 생성 후 리턴 함수
+function createMessage(msg, topic) {
+	message = new Paho.MQTT.Message(msg);
+	message.destinationName = topic;
+	return message;
+}
+
+//대기목록 수 가져와서 보내는 함수
+function importWaitingCnt() {
+	$.ajax({
+		url:"requestWaitingCnt.do",
+		type:"POST",
+		success:function(data) {
+//			console.log(typeof(data.waitingCnt));
+//			sendWaitingCnt("3");
+			waitingCnt = data.waitingCnt
+			sendWaitingCnt(waitingCnt.toString());
+			
+		},
+		error:function() {
+			alert("**requestWaitingCnt.do**\nError");
+		}
+	});
+}
+
+//대기목록 보내는 함수
+function sendWaitingCnt(cnt) {
+	console.log("대기목록:" + cnt);
+	message = new Paho.MQTT.Message(cnt);
+	message.destinationName = "119/waitingCnt";
+//	message.qos = 2;
+	client.send(message);
+}
+
+//목적지 보내는 함수
+/*function sendDestination() {
+	console.log("sendDestination");
+	message = new Paho.MQTT.Message("M");
+	message.destinationName = "car/2/destination";
+//	message.qos = 2;
+	client.send(message);
+} */
 
 function onConnect() {
 	console.log("onConnect");
@@ -33,20 +91,35 @@ function onConnect() {
 	client.send(message);
 	console.log("message send : /giveMeDispatchPossible");
 	
-	/**/
+	//**************************************************************************
+	
+	/*연결되자마자 대기목록 수 가져와서 보내기*/
+//	setInterval(importWaitingCnt, 1000);
+	importWaitingCnt();
+	
+	/*연결되자마자 119 서버에 대기목록 수 보내기*/
+	/*message = new Paho.MQTT.Message(waitingCnt.toString());
+	message.destinationName = "119/waitingCnt";
+	message.qos = 2;
+	client.send(message);*/
+	
 	/* 119 서버에서 환자정보 받아오기 */
 	client.subscribe("controltower/#");
+	
+	/* 차 상태 받아오기 */
+	client.subscribe("ambulance/1/status");
+	client.subscribe("ambulance/2/status");
 	
 	client.subscribe("ambulance/1/camera/frameLine");
 	client.subscribe("ambulance/2/camera/frameLine");
 	
-	/* 모든 car의 상태 받아오기(리스트로) */
-	requestCarStatuses();
+//	setInterval(sendDestination, 1000);
+//	clearInterval(sendDestination);
 }
 
 function onMessageArrived(message) {
 	topic = message.destinationName;
-	console.log("message arrived");
+//	console.log("message arrived");
 	if(topic == "/patientINFO") {
 		var patientInformation = JSON.parse(message.payloadString);
 		$.ajax({
@@ -129,30 +202,68 @@ function onMessageArrived(message) {
 	
 	//119에서 환자정보 받는 토픽==========================================
 	else if(topic == "controltower/patientInfo") {
+		console.log("전송됨");
 		var patientInfo = JSON.parse(message.payloadString);
+		var assignedCar = "nothing";
 		
-		//차 배정
-		//일단 차랑 연결이 돼서 차 상태를 받아와야 가능한거지
+		//차 배정ㅇ
+		//일단 차랑 연결이 돼서 차 상태를 받아와야 가능한거지ㅇ
 		//그러니까 if문 써서 체크해야돼
 		//근데 연결이 안돼서 차 상태를 못받아왔다면?
-		patientInfo.pcarAssign = assignCar();
-		console.log("topic:" + topic);
-		console.log(patientInfo);
-		console.log(patientInfo.pcarAssign);
+		if(waitingCnt == 0) { //대기목록이 없다면 바로 배정
+			assignedCar = assignCar();
+			
+			//차에 목적지 전송
+			/*if(patientInfo.pcarAssign != "nothing") {
+				client.send(
+					createMessage(patientInfo.plocation, "car/" + patientInfo.pcarAssign + "/destination")
+				);
+				console.log(patientInfo.plocation + "car/" + patientInfo.pcarAssign + "/destination");
+				console.log("차:" + statuses[patientInfo.pcarAssign-1].working);
+			}*/
+		}
+		else if(waitingCnt < 6) { //대기목록이 6보다 적다면 nothing으로 배정
+			
+		}
+		else if(waitingCnt >= 6) { //대기목록이 6 이상이라면 안오나?
+			
+		}
 		
-		/*$.ajax({
+		patientInfo.pcarAssign = assignedCar;
+		
+		$.ajax({
 			url:"patientInfo.do",
 			type:"POST",
 			data:patientInfo,
 			success:function(data) {
 				console.log(data.result);
+			},
+			error:function() {
+				alert("**patientInfo.do**\nError");
 			}
-		});*/
+		});
 	}
 	//=====================================================================
 	
 	//차 상태 받아오는 토픽================================================
-	//내 예상으로는 ["drive", "wait"] 이런식으로 들어와야돼
+	//토픽을 저렇게 하는 게 아니라 포함하고 있는지 아닌지로 하는게 나을거 같아
+	else if(topic == "ambulance/1/status" || topic == "ambulance/2/status") { 
+		var carNo = topic[topic.indexOf("/")+1];
+		console.log("차:" + carNo);
+		var status = JSON.parse(message.payloadString);
+		statuses[carNo-1] = status;
+		console.log(statuses);
+		
+		if(statuses[carNo-1].working == true) {
+			getElementById("workingStatus" + (carNo-1)).html("이송중");
+		}
+		else if(statuses[carNo-1].working == false) {
+			getElementById("workingStatus" + (carNo-1)).html("대기중");
+		}
+		else {
+			getElementById("workingStatus" + (carNo-1)).html("연결중");
+		}
+	}
 	//=====================================================================
 	
 	//카메라 영상 출력=====================================================
@@ -168,25 +279,13 @@ function onMessageArrived(message) {
 	//=====================================================================
 }
 
-//차 상태 달라고 요청하는 함수=========================================
-//=====================================================================
-
+//차 배정 함수=========================================================
 function assignCar() {
-	var waitingCarNo = 0;
-	if(carStatuses.length == 0) { //차 상태를 못받아왔다는 얘기
-		return "disconnect";
-	}
-	for(i=0; i<carStatuses.length; i++) {
-		if(carStatuses[i] == "wait") {
-			waitingCarNo = i + 1;
-			break;
+	for(i=0; i<statuses.length; i++) {
+		if(statuses[i].working == false) {
+			return "" + (i+1);
 		}
 	}
-	if(waitingCarNo != 0) {
-		return "car" + waitingCarNo;
-	}
-	else {
-		return "nothing";
-	}
+	return "nothing";
 }
-	
+//=====================================================================

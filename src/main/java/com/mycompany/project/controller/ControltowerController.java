@@ -164,5 +164,20 @@ public class ControltowerController {
 		pw.close();
 	}
 	
+	@RequestMapping("/requestWaitingCnt.do")
+	public void requestWaitingCnt(HttpServletResponse response) throws IOException
+	{
+		int waitingCnt = controltowerService.selectCountByPcarAssign("nothing");
+//		LOGGER.info("대기인원:{}", waitingCnt);
+		
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("waitingCnt", waitingCnt);
+		
+		response.setContentType("application/json; charset=UTF-8");
+		PrintWriter pw = response.getWriter();
+		pw.write(jsonObject.toString());
+		pw.flush();
+		pw.close();
+	}
 	
 }

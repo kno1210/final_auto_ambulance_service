@@ -27,7 +27,8 @@
 						<div class="content">
 							<div class="inner">
 								<h1>Auto Ambulance</h1>
-								<p>Integrated Control Center Main</p>
+								<p>Integrated Control Center</p>
+								<p>Main</p>
 							</div>
 						</div>
 						<nav>
@@ -38,6 +39,9 @@
 							<ul>
 								<li><a href="${pageContext.request.contextPath}/ambulance/main.do?carNo=1">Car 1</a></li>
 								<li><a href="${pageContext.request.contextPath}/ambulance/main.do?carNo=2">Car 2</a></li>
+							</ul>
+							<ul>
+								<li><a href="${pageContext.request.contextPath}/home/camera.do">Camera</a></li>
 							</ul>
 						</nav>
 					</header>
@@ -345,9 +349,11 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 
 				<!-- Footer -->
 					<footer id="footer">
-						<p class="copyright">
-						KOSA-L3-Team1 Final Project(autonomous-car)
-						</p>
+						<p class="copyright">KOSA-L3-Team1 Final Project</p>
+						<p class="copyright">(autonomous-car)</p>
+						
+						
+						
 					</footer>
 
 			</div>

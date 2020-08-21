@@ -34,4 +34,10 @@ public class HomeController {
 		return "home/login_test";
 	}
 	
+	@RequestMapping("/camera.do")
+	public String camera()
+	{
+		return "home/camera";
+	}
+	
 }

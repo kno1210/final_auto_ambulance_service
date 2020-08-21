@@ -20,6 +20,7 @@ public class ControltowerDao extends EgovAbstractMapper {
 	}
 
 	public int selectCountByPcarAssign(String pcarAssign) {
+//		LOGGER.info("실행");
 		int totalRows = selectOne("patient.selectCountByPcarAssign", pcarAssign);
 		return totalRows;
 	}

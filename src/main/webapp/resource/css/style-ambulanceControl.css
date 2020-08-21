@@ -88,6 +88,7 @@ select option {
 
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
 	  color: #ffffff;
+	  letter-spacing:0.08rem;
 }
 .h1, h1 {
 	font-size: 48px;
@@ -161,6 +162,7 @@ p {
 }
 a {
     color: #ffffff;
+    letter-spacing: 0.08rem;
 }
 a {
   outline: none!important

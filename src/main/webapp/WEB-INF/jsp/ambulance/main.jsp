@@ -70,7 +70,7 @@
      <li class="nav-item">
       <a href="${pageContext.request.contextPath}/home/main.do">
        <img src="${pageContext.request.contextPath}/resource/images/logo.png" class="logo-icon" alt="logo icon">
-       Main
+       MAIN
       </a>
      </li>
     </ul>
@@ -247,11 +247,11 @@
 		controllerCtx.fillStyle = "black";
 		
 		//속도
-		controllerCtx.fillText(statuses.speed.toFixed(2)*100, 1020, 200);
+		controllerCtx.fillText(stat.speed.toFixed(2)*100, 1020, 200);
 		controllerCtx.fillText("km/h", 1080, 200);
 
 		//배터리
-		controllerCtx.fillText(statuses.battery, 1010, 280); //배터리 잔량
+		controllerCtx.fillText(stat.battery, 1010, 280); //배터리 잔량
 		controllerCtx.fillText("%", 1060, 280); //퍼센트
 		controllerCtx.drawImage(bat, 1100, 230, 80, 60); //배터리 아이콘
  		

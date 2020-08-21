@@ -23,6 +23,7 @@ public class ControltowerService {
 	}
 
 	public int selectCountByPcarAssign(String pcarAssign) {
+//		LOGGER.info("실행");
 		int totalRows = controltowerDao.selectCountByPcarAssign(pcarAssign);
 		return totalRows;
 	}

@@ -194,12 +194,12 @@
      <div class="brand-logo">
       <a href="${pageContext.request.contextPath}/home/main.do">
       	<img src="${pageContext.request.contextPath}/resource/images/logo.png" class="logo-icon" alt="logo icon">
-      	Main
+      	MAIN
      </a>
    </div>
    <table class="table align-items-center table-flush table-bordered">
                  <tbody>
-                   <tr>
+                  	 <tr>
 							<td class="patientKey">환자 번호</td>
 							<td id="pno" class="patientValue">${nowPatient.pno}</td>
 						</tr>
@@ -235,7 +235,7 @@
 							<td class="patientKey">신고자 전화번호</td>
 							<td id="preportTel" class="patientValue">${nowPatient.preportTel}</td>
 						</tr>
-						</tbody>
+					</tbody>
                  </table>
                  <div id="content2">대기환자 수 : ${patientWating}</div>
    
@@ -261,7 +261,7 @@
 <!--End topbar header-->
 
   <div class="content-wrapper">
-    <div class="container-fluid">
+    <!-- <div class="container-fluid"> -->
 
   <!--Start Dashboard Content-->
 	  
@@ -270,7 +270,53 @@
 	    <div class="card">
 		 <div class="card-header">차1 카메라 뷰</div>
 		 <div class="card-body" id="camera">
-			<img style="width:100%; height:100%;" id="cameraView1">
+			<!-- <img style="width:100%; height:100%;" id="cameraView1"> -->
+			<div>
+				<h4 id="workingStatus1">연결중</h4>
+			</div>
+			<div>
+				<table class="table align-items-center table-flush table-bordered">
+					<tbody>
+                  	 <tr>
+							<td class="patientKey">환자 번호</td>
+							<td id="pno" class="patientValue">${nowPatient.pno}</td>
+						</tr>
+						<tr>
+							<td class="patientKey">신고 접수 시간</td>
+							<td id="preportTime" class="patientValue">${nowPatient.preportTime}</td>
+						</tr>
+						<tr>
+							<td class="patientKey">환자 위치</td>
+							<td id="plocation" class="patientValue">${nowPatient.plocation}</td>
+						</tr>
+						<tr>
+							<td class="patientKey">환자 이름</td>
+							<td id="pname" class="patientValue">${nowPatient.pname}</td>
+						</tr>
+						<tr>
+							<td class="patientKey">증상</td>
+							<td id="psymptom" class="patientValue">${nowPatient.psymptom}</td>
+						</tr>
+						<tr>
+							<td class="patientKey">혈액형</td>
+							<td id="pbloodType" class="patientValue">${nowPatient.pbloodType}</td>
+						</tr>
+						<tr>
+							<td class="patientKey">성별</td>
+							<td id="psex" class="patientValue">${nowPatient.psex}</td>
+						</tr>
+						<tr>
+							<td class="patientKey">나이</td>
+							<td id="page" class="patientValue">${nowPatient.page}</td>
+						</tr>
+						<tr>
+							<td class="patientKey">신고자 전화번호</td>
+							<td id="preportTel" class="patientValue">${nowPatient.preportTel}</td>
+						</tr>
+					</tbody>
+                 </table>
+				</table>
+			</div>
 		 </div>
 		</div>
 	</div>
@@ -291,7 +337,26 @@
 	    <div class="card">
 		 <div class="card-header">차2 카메라 뷰</div>
 		 <div class="card-body" id="camera">
-			<img style="width:100%; height:100%;" id="cameraView2">
+			<!-- <img style="width:100%; height:100%;" id="cameraView2"> -->
+			<div>
+				<h4 id="workingStatus1">연결중</h4>
+			</div>
+			<div>
+				<table class="table align-items-center table-flush table-bordered">
+					<tr>
+						<td class="patientKey">환자 번호</td>
+						<td class="patientValue">ㅎㅇㅎㅇㅎㅇ</td>
+					</tr>
+					<tr>
+						<td class="patientKey">11</td>
+						<td class="patientValue">111</td>
+					</tr>
+					<tr>
+						<td class="patientKey">qq</td>
+						<td class="patientValue">ㅂㅂㅂㅂ</td>
+					</tr>
+				</table>
+			</div>
 		 </div>
 		</div>
 	</div>
@@ -309,18 +374,18 @@
 	
       <!--End Dashboard Content-->
 		
-    </div><!-- End container-fluid-->
+    <!-- </div>End container-fluid -->
     </div><!--End content-wrapper-->
 	
 	<!--Start footer-->
-	<footer class="footer">
+	<!-- <footer class="footer">
       <div class="container">
         <div class="text-center">
           <p>KOSA-L3-Team1 Final Project(autonomous-car)</p>
 		  <p>제작: 정채은 이호정 최영수 김상엽 권오현</p>
         </div>
       </div>
-    </footer>
+    </footer> -->
 	<!--End footer-->
   </div><!--End wrapper-->
 
