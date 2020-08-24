@@ -40,9 +40,9 @@
 								<li><a href="${pageContext.request.contextPath}/ambulance/main.do?carNo=1">Car 1</a></li>
 								<li><a href="${pageContext.request.contextPath}/ambulance/main.do?carNo=2">Car 2</a></li>
 							</ul>
-							<ul>
+							<%-- <ul>
 								<li><a href="${pageContext.request.contextPath}/home/camera.do">Camera</a></li>
-							</ul>
+							</ul> --%>
 						</nav>
 					</header>
 <%-- 
