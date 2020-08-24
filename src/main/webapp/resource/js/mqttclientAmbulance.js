@@ -143,10 +143,6 @@ function onMessageArrived(message) {
 				message = new Paho.MQTT.Message(dispatchPossible);
 				message.destinationName = "/dispatchPossible";
 				client.send(message);
-				
-				client.send(
-						createMessage(movingPatient.plocation, "car/" + carNo + "/destination")
-				);
 			},
 			error:function(){
 				window.alert("error");

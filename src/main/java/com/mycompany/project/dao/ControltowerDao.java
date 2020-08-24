@@ -39,5 +39,10 @@ public class ControltowerDao extends EgovAbstractMapper {
 		update("patient.updatePcarAssign", patient);
 	}
 
+	public Patient selectTopPatientByPcarAssign(String pcarAssign) {
+		Patient patient = selectOne("patient.selectTopPatientByPcarAssign", pcarAssign);
+		return patient;
+	}
+
 	
 }

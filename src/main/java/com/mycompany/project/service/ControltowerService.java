@@ -27,6 +27,12 @@ public class ControltowerService {
 		int totalRows = controltowerDao.selectCountByPcarAssign(pcarAssign);
 		return totalRows;
 	}
+	
+	public Patient getTopPatientByPcarAssign(String pcarAssign)
+	{
+		Patient patient = controltowerDao.selectTopPatientByPcarAssign(pcarAssign);
+		return patient;
+	}
 
 	public List<Patient> getPatientListByPcarAssign(String pcarAssign) {
 		List<Patient> patientList = controltowerDao.selectListByPcarAssign(pcarAssign);

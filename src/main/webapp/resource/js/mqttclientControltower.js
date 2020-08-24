@@ -5,7 +5,7 @@ var statuses = [
 		direction:"stop",
 		speed:0,
 		angle:0,
-		working:true
+		working:undefined
 	},
 	{
 		battery:0,
@@ -13,7 +13,7 @@ var statuses = [
 		direction:"stop",
 		speed:0,
 		angle:0,
-		working:false
+		working:undefined
 	}
 ];
 
@@ -46,7 +46,7 @@ function importWaitingCnt() {
 		success:function(data) {
 //			console.log(typeof(data.waitingCnt));
 //			sendWaitingCnt("3");
-			waitingCnt = data.waitingCnt
+			waitingCnt = data.waitingCnt;
 			sendWaitingCnt(waitingCnt.toString());
 			
 		},
@@ -59,20 +59,42 @@ function importWaitingCnt() {
 //대기목록 보내는 함수
 function sendWaitingCnt(cnt) {
 	console.log("대기목록:" + cnt);
-	message = new Paho.MQTT.Message(cnt);
-	message.destinationName = "119/waitingCnt";
-//	message.qos = 2;
-	client.send(message);
+//	message = new Paho.MQTT.Message(cnt);
+//	message.destinationName = "119/waitingCnt";
+	client.send(createMessage(cnt, "119/waitingCnt"));
 }
 
 //목적지 보내는 함수
-/*function sendDestination() {
+function sendDestination(dest, carNo) {
 	console.log("sendDestination");
-	message = new Paho.MQTT.Message("M");
-	message.destinationName = "car/2/destination";
-//	message.qos = 2;
-	client.send(message);
-} */
+//	message = new Paho.MQTT.Message(dest);
+//	message.destinationName = "car/" + carNo + "/destination";
+	client.send(createMessage(dest, "car/" + carNo + "/destination"));
+}
+
+//차 배정 함수
+function assignCar() {
+	for(i=0; i<statuses.length; i++) {
+		if(statuses[i].working == false) {
+			return "" + (i+1);
+		}
+	}
+	return "nothing";
+}
+
+function importAssignPatientInfo(carNo) {
+	$.ajax({
+		url:"requestAssignPatientInfo.do",
+		type:"POST",
+		data:{carNo:carNo},
+		success:function(data) {
+			
+		},
+		error:function() {
+			alert("** requestAssignPatientInfo.do **\nError");
+		}
+	});
+}
 
 function onConnect() {
 	console.log("onConnect");
@@ -93,15 +115,9 @@ function onConnect() {
 	
 	//**************************************************************************
 	
-	/*연결되자마자 대기목록 수 가져와서 보내기*/
-//	setInterval(importWaitingCnt, 1000);
-	importWaitingCnt();
-	
-	/*연결되자마자 119 서버에 대기목록 수 보내기*/
-	/*message = new Paho.MQTT.Message(waitingCnt.toString());
-	message.destinationName = "119/waitingCnt";
-	message.qos = 2;
-	client.send(message);*/
+	/*연결되자마자 대기목록 수 가져와서 119에 보내기*/
+	setInterval(importWaitingCnt, 1000);
+//	importWaitingCnt();
 	
 	/* 119 서버에서 환자정보 받아오기 */
 	client.subscribe("controltower/#");
@@ -110,11 +126,6 @@ function onConnect() {
 	client.subscribe("ambulance/1/status");
 	client.subscribe("ambulance/2/status");
 	
-	client.subscribe("ambulance/1/camera/frameLine");
-	client.subscribe("ambulance/2/camera/frameLine");
-	
-//	setInterval(sendDestination, 1000);
-//	clearInterval(sendDestination);
 }
 
 function onMessageArrived(message) {
@@ -204,42 +215,47 @@ function onMessageArrived(message) {
 	else if(topic == "controltower/patientInfo") {
 		console.log("전송됨");
 		var patientInfo = JSON.parse(message.payloadString);
-		var assignedCar = "nothing";
+		patientInfo.pcarAssign = "nothing";
 		
-		//차 배정ㅇ
-		//일단 차랑 연결이 돼서 차 상태를 받아와야 가능한거지ㅇ
-		//그러니까 if문 써서 체크해야돼
-		//근데 연결이 안돼서 차 상태를 못받아왔다면?
-		if(waitingCnt == 0) { //대기목록이 없다면 바로 배정
-			assignedCar = assignCar();
+		//대기목록이 없다면 바로 배정
+		if(waitingCnt == 0) { 
+			console.log("차:" + assignedCar);
+			console.log("목적지:" + patientInfo.plocation);
+			patientInfo.pcarAssign = assignCar();
 			
 			//차에 목적지 전송
-			/*if(patientInfo.pcarAssign != "nothing") {
+			if(patientInfo.pcarAssign != "nothing") {
 				client.send(
 					createMessage(patientInfo.plocation, "car/" + patientInfo.pcarAssign + "/destination")
 				);
 				console.log(patientInfo.plocation + "car/" + patientInfo.pcarAssign + "/destination");
 				console.log("차:" + statuses[patientInfo.pcarAssign-1].working);
-			}*/
-		}
-		else if(waitingCnt < 6) { //대기목록이 6보다 적다면 nothing으로 배정
+				
+				/*$("#car" + 1 + " " + "#pno").html(patient.pno);
+				$("#car" + 1 + " " + "#preportTime").html(patient.preportTime);
+				$("#car" + 1 + " " + "#plocation").html(patient.plocation);
+				$("#car" + 1 + " " + "#pname").html(patient.pname);
+				$("#car" + 1 + " " + "#psymptom").html(patient.psymptom);
+				$("#car" + 1 + " " + "#pbloodType").html(patient.pbloodType);
+				$("#car" + 1 + " " + "#psex").html(patient.psex);
+				$("#car" + 1 + " " + "#page").html(patient.page);
+				$("#car" + 1 + " " + "#preportTel").html(patient.preportTel);*/
+			}
+			
 			
 		}
-		else if(waitingCnt >= 6) { //대기목록이 6 이상이라면 안오나?
-			
-		}
+		//대기목록이 있다면 배정 X
 		
-		patientInfo.pcarAssign = assignedCar;
-		
+		//서버에 환자 정보 보내기
 		$.ajax({
-			url:"patientInfo.do",
+			url:"savePatientInfo.do",
 			type:"POST",
 			data:patientInfo,
 			success:function(data) {
 				console.log(data.result);
 			},
 			error:function() {
-				alert("**patientInfo.do**\nError");
+				alert("** patientInfo.do **\nError");
 			}
 		});
 	}
@@ -249,43 +265,48 @@ function onMessageArrived(message) {
 	//토픽을 저렇게 하는 게 아니라 포함하고 있는지 아닌지로 하는게 나을거 같아
 	else if(topic == "ambulance/1/status" || topic == "ambulance/2/status") { 
 		var carNo = topic[topic.indexOf("/")+1];
-		console.log("차:" + carNo);
 		var status = JSON.parse(message.payloadString);
+		var viewId = "car" + carNo;
 		statuses[carNo-1] = status;
-		console.log(statuses);
+		console.log("차" + carNo + ":" + statuses[carNo-1].working);
 		
 		if(statuses[carNo-1].working == true) {
-			getElementById("workingStatus" + (carNo-1)).html("이송중");
+			document.getElementById("workingStatus" + String(carNo)).innerHTML = "[ 이송중 ]";
 		}
 		else if(statuses[carNo-1].working == false) {
-			getElementById("workingStatus" + (carNo-1)).html("대기중");
-		}
-		else {
-			getElementById("workingStatus" + (carNo-1)).html("연결중");
+			document.getElementById("workingStatus" + String(carNo)).innerHTML = "[ 대기중 ]";
+			//배터리 상태 검사
+			if(statuses[carNo-1].battery > 15) {
+				//nothing 중에서 가장 위에 꺼내오기
+				$.ajax({
+					url:"requestTopPatient.do",
+					type:"POST",
+					data:{carNo:carNo, assignedCar:"nothing"},
+					success:function(data) {
+						var patient = data.patient;
+						var dest = data.patient.plocation;
+						console.log(data.patient);
+						if(dest != "null") { //nothing이 있다면
+							console.log("목적지:" + dest);
+							setTimeout(sendDestination, 3000, dest, "car/" + carNo + "/destination");
+							
+							/*$("#car" + 1 + " " + "#pno").text(patient.pno);
+							$("#car" + 1 + " " + "#preportTime").text(patient.preportTime);
+							$("#car" + 1 + " " + "#plocation").text(patient.plocation);
+							$("#car" + 1 + " " + "#pname").text(patient.pname);
+							$("#car" + 1 + " " + "#psymptom").text(patient.psymptom);
+							$("#car" + 1 + " " + "#pbloodType").text(patient.pbloodType);
+							$("#car" + 1 + " " + "#psex").text(patient.psex);
+							$("#car" + 1 + " " + "#page").text(patient.page);
+							$("#car" + 1 + " " + "#preportTel").text(patient.preportTel);*/
+						}
+					},
+					error:function() {
+						alert("** requestTopPatient.do **\nError");
+					}
+				});
+			}
 		}
 	}
 	//=====================================================================
-	
-	//카메라 영상 출력=====================================================
-	else if(message.destinationName == "ambulance/1/camera/frameLine") {
-		var cameraView1 = $("#cameraView1").attr("src", "data:image/jpg;base64," + message.payloadString);
-//		cam.src = "data:image/jpg;base64," + message.payloadString;
-		
-	}
-	else if(message.destinationName == "ambulance/2/camera/frameLine") {
-		var cameraView2 = $("#cameraView2").attr("src", "data:image/jpg;base64," + message.payloadString);
-//		cam.src = "data:image/jpg;base64," + message.payloadString;
-	}
-	//=====================================================================
 }
-
-//차 배정 함수=========================================================
-function assignCar() {
-	for(i=0; i<statuses.length; i++) {
-		if(statuses[i].working == false) {
-			return "" + (i+1);
-		}
-	}
-	return "nothing";
-}
-//=====================================================================

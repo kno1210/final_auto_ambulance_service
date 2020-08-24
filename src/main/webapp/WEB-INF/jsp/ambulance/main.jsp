@@ -107,8 +107,8 @@
       <div class="row row-group m-0">
        <div class="col-12 col-xl-6 border-light">
 		<div class="card-body">
-		 <div id="speed">
-		  <h5><b>속도</b></h5>
+		 <div id="siren">
+		  <h5><b>사이렌</b></h5>
 		  <button class="btn btn-danger btn-sm" onclick="sirenOn()">사이렌 on</button>
 		  <button class="btn btn-info btn-sm" onclick="sirenOff()">사이렌 off</button>
 		 </div>

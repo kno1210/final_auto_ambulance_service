@@ -34,14 +34,18 @@ public class ControltowerController {
 	public String main(Model model) {
 		LOGGER.info("컨트롤타워 메인페이지");
 		List<Patient> patientList = controltowerService.getPatientListByPcarAssign("nothing");
-		boolean isNowPatient;
-		if(patientList.size() > 0) {
+		boolean isNowPatient = true;
+		/*if(patientList.size() > 0) {
 			model.addAttribute("nowPatient", patientList.get(0));
-			int patientWaiting = patientList.size() - 1;
-			model.addAttribute("patientWating", patientWaiting);
 			isNowPatient = true;
 		}else {
 			isNowPatient = false;
+		}*/
+		if(patientList.size() > 0)
+		{
+			int patientWaiting = patientList.size();
+			model.addAttribute("patientWating", patientWaiting);
+			model.addAttribute("patientList", patientList);
 		}
 		model.addAttribute("isNowPatient", isNowPatient);
 		
@@ -137,7 +141,7 @@ public class ControltowerController {
 		pw.close();
 	}
 	
-	@RequestMapping("/patientInfo.do")
+	@RequestMapping("/savePatientInfo.do")
 	public void patientInfo(@RequestParam Map<String, String> patientInfo, HttpServletResponse response) throws IOException
 	{
 		LOGGER.info("실행");
@@ -180,4 +184,62 @@ public class ControltowerController {
 		pw.close();
 	}
 	
+	//
+	@RequestMapping("/requestTopPatient.do")
+	public void requestTopPatient(HttpServletResponse response, 
+			String carNo, String assignedCar, 
+			Model model) throws IOException 
+	{
+//		LOGGER.info(carNo);
+		Patient patient = null;
+		patient = controltowerService.getTopPatientByPcarAssign(assignedCar);
+		
+		JSONObject jsonPatient = new JSONObject();
+		JSONObject jsonObejct = new JSONObject();
+		if(patient == null) //assignedCar로 가져온게 없다면
+		{
+			jsonObejct.put("patient", "null");
+		}
+		else //assignedCar로 가져온게 있다면
+		{
+			//nothing을 carAssign 해서 업데이트
+			patient.setPcarAssign(carNo);
+//			controltowerService.updatePcarAssign(patient);
+			
+			//patient 응답
+//			jsonPatient.put("plocation", patient.getPlocation());
+			jsonPatient.put("pno", patient.getPno());
+			jsonPatient.put("preportTime", patient.getPreportTime());
+			jsonPatient.put("preportTel", patient.getPreportTel());
+			jsonPatient.put("plocation", patient.getPlocation());
+			jsonPatient.put("pname", patient.getPname());
+			jsonPatient.put("psymptom", patient.getPsymptom());
+			jsonPatient.put("psex", patient.getPsex());
+			jsonPatient.put("page", patient.getPage());
+			jsonPatient.put("pbloodType", patient.getPbloodType());
+			
+			jsonObejct.put("patient", jsonPatient);
+			
+			/*if(assignedCar.equals("1"))
+			{
+				model.addAttribute("patient1", patient);
+			}
+			else if(assignedCar.equals("2"))
+			{
+				model.addAttribute("patient2", patient);
+			}*/
+		}
+		
+		response.setContentType("application/json; charset=UTF-8");
+		PrintWriter pw = response.getWriter();
+		pw.write(jsonObejct.toString());
+		pw.flush();
+		pw.close();
+	}
+	
+	@RequestMapping("/requestAssignPatientInfo.do")
+	public void requestAssignPatientInfo(HttpServletResponse response, String carNo)
+	{
+		
+	}
 }

@@ -116,73 +116,6 @@
       	}
       </script>
    </head>
-   <%-- <body>
-      	<section id="wrap">
-      		<h1>오토병원 응급차량 관제센터</h1>
-      		<header>
-      			<strong class="logo_box" ><img alt="오토병원 응급차량 관제센터" src="${pageContext.request.contextPath}/resource/img/controltowerMainLogo.png"></strong>
-      		</header>
-      		
-			<section id="container">
-				<section id="menu1">
-					<div id="content1">
-						<table>
-							<tr>
-								<td class="patientKey">환자 번호</td>
-								<td id="pno" class="patientValue">${nowPatient.pno}</td>
-							</tr>
-							<tr>
-								<td class="patientKey">신고 접수 시간</td>
-								<td id="preportTime" class="patientValue">${nowPatient.preportTime}</td>
-							</tr>
-							<tr>
-								<td class="patientKey">환자 위치</td>
-								<td id="plocation" class="patientValue">${nowPatient.plocation}</td>
-							</tr>
-							<tr>
-								<td class="patientKey">환자 이름</td>
-								<td id="pname" class="patientValue">${nowPatient.pname}</td>
-							</tr>
-							<tr>
-								<td class="patientKey">증상</td>
-								<td id="psymptom" class="patientValue">${nowPatient.psymptom}</td>
-							</tr>
-							<tr>
-								<td class="patientKey">혈액형</td>
-								<td id="pbloodType" class="patientValue">${nowPatient.pbloodType}</td>
-							</tr>
-							<tr>
-								<td class="patientKey">성별</td>
-								<td id="psex" class="patientValue">${nowPatient.psex}</td>
-							</tr>
-							<tr>
-								<td class="patientKey">나이</td>
-								<td id="page" class="patientValue">${nowPatient.page}</td>
-							</tr>
-							<tr>
-								<td class="patientKey">신고자 전화번호</td>
-								<td id="preportTel" class="patientValue">${nowPatient.preportTel}</td>
-							</tr>
-						</table>
-					</div>
-   					<div id="content2">대기환자 수 : ${patientWating}</div>
-				</section>
-				<section id="menu2">
-					<div id="content3"></div>
-					<div>
-						<button onclick="carStart()">응급차 출발</button>
-					</div>
-				</section>
-			</section>
-      		
-      		<footer>
-      			<p>KOSA-L3-Team1 Final Project(autonomous-car)</p>
-      			<p>제작: 정채은 이호정 최영수 김상엽 권오현</p>
-      		</footer>
-      	</section>
-      	
-      	
-   </body> --%>
    
 <body class="bg-theme bg-theme9"> <!-- 1 ~ 9 -->
  
@@ -190,57 +123,35 @@
 <div id="wrapper">
 
 <!--Start sidebar-wrapper-->
-   <div id="sidebar-wrapper">
-     <div class="brand-logo">
-      <a href="${pageContext.request.contextPath}/home/main.do">
-      	<img src="${pageContext.request.contextPath}/resource/images/logo.png" class="logo-icon" alt="logo icon">
-      	MAIN
-     </a>
-   </div>
-   <table class="table align-items-center table-flush table-bordered">
-                 <tbody>
-                  	 <tr>
-							<td class="patientKey">환자 번호</td>
-							<td id="pno" class="patientValue">${nowPatient.pno}</td>
-						</tr>
-						<tr>
-							<td class="patientKey">신고 접수 시간</td>
-							<td id="preportTime" class="patientValue">${nowPatient.preportTime}</td>
-						</tr>
-						<tr>
-							<td class="patientKey">환자 위치</td>
-							<td id="plocation" class="patientValue">${nowPatient.plocation}</td>
-						</tr>
-						<tr>
-							<td class="patientKey">환자 이름</td>
-							<td id="pname" class="patientValue">${nowPatient.pname}</td>
-						</tr>
-						<tr>
-							<td class="patientKey">증상</td>
-							<td id="psymptom" class="patientValue">${nowPatient.psymptom}</td>
-						</tr>
-						<tr>
-							<td class="patientKey">혈액형</td>
-							<td id="pbloodType" class="patientValue">${nowPatient.pbloodType}</td>
-						</tr>
-						<tr>
-							<td class="patientKey">성별</td>
-							<td id="psex" class="patientValue">${nowPatient.psex}</td>
-						</tr>
-						<tr>
-							<td class="patientKey">나이</td>
-							<td id="page" class="patientValue">${nowPatient.page}</td>
-						</tr>
-						<tr>
-							<td class="patientKey">신고자 전화번호</td>
-							<td id="preportTel" class="patientValue">${nowPatient.preportTel}</td>
-						</tr>
-					</tbody>
-                 </table>
-                 <div id="content2">대기환자 수 : ${patientWating}</div>
-   
-   </div>
-   <!--End sidebar-wrapper-->
+	<div id="sidebar-wrapper">
+		<div class="brand-logo">
+			<a href="${pageContext.request.contextPath}/home/main.do">
+				<img src="${pageContext.request.contextPath}/resource/images/logo.png" class="logo-icon" alt="logo icon">
+				MAIN
+			</a>
+		</div>
+		
+		<div>
+			<p id="patientWaiting">대기환자 수 : ${patientWating}</p>
+		</div>
+		<table class="table align-items-center table-flush table-bordered">
+			<tbody>
+				<tr style="text-align: center">
+					<th>환자 번호</th>
+					<th>신고 접수 시간</th>
+					<th>환자 위치</th>
+				</tr>
+				<c:forEach var="patient" items="${patientList}">
+					<tr> 
+						<td id="pno" class="patientValue">${patient.pno}</td>
+						<td id="preportTime" class="patientValue">${patient.preportTime}</td>
+						<td id="plocation" class="patientValue">${patient.plocation}</td>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+	</div>
+	<!--End sidebar-wrapper-->
 
 <!--Start topbar header-->
 <header class="topbar-nav">
@@ -266,110 +177,125 @@
   <!--Start Dashboard Content-->
 	  
 	<div class="row">
-     <div class="col-12 col-lg-6 col-xl-6">
-	    <div class="card">
-		 <div class="card-header">차1 카메라 뷰</div>
-		 <div class="card-body" id="camera">
-			<!-- <img style="width:100%; height:100%;" id="cameraView1"> -->
-			<div>
-				<h4 id="workingStatus1">연결중</h4>
+		<div class="col-12 col-lg-6">
+     		<div class="card">
+		 		<div class="card-header">차1 맵 뷰</div>
+		 		<div class="card-body" id="map">
+					<img style="width:100%; height:100%;" id="mapView1" src="${pageContext.request.contextPath}/resource/images/map sample.png">
+				</div>
 			</div>
-			<div>
-				<table class="table align-items-center table-flush table-bordered">
-					<tbody>
-                  	 <tr>
-							<td class="patientKey">환자 번호</td>
-							<td id="pno" class="patientValue">${nowPatient.pno}</td>
-						</tr>
-						<tr>
-							<td class="patientKey">신고 접수 시간</td>
-							<td id="preportTime" class="patientValue">${nowPatient.preportTime}</td>
-						</tr>
-						<tr>
-							<td class="patientKey">환자 위치</td>
-							<td id="plocation" class="patientValue">${nowPatient.plocation}</td>
-						</tr>
-						<tr>
-							<td class="patientKey">환자 이름</td>
-							<td id="pname" class="patientValue">${nowPatient.pname}</td>
-						</tr>
-						<tr>
-							<td class="patientKey">증상</td>
-							<td id="psymptom" class="patientValue">${nowPatient.psymptom}</td>
-						</tr>
-						<tr>
-							<td class="patientKey">혈액형</td>
-							<td id="pbloodType" class="patientValue">${nowPatient.pbloodType}</td>
-						</tr>
-						<tr>
-							<td class="patientKey">성별</td>
-							<td id="psex" class="patientValue">${nowPatient.psex}</td>
-						</tr>
-						<tr>
-							<td class="patientKey">나이</td>
-							<td id="page" class="patientValue">${nowPatient.page}</td>
-						</tr>
-						<tr>
-							<td class="patientKey">신고자 전화번호</td>
-							<td id="preportTel" class="patientValue">${nowPatient.preportTel}</td>
-						</tr>
-					</tbody>
-                 </table>
-				</table>
-			</div>
-		 </div>
-		</div>
-	</div>
 		
-	<div class="col-12 col-lg-6 col-xl-6">
-		<div class="card">
-		 <div class="card-header">차1 맵 뷰</div>
-		 <div class="card-body" id="map">
-			<img style="width:100%; height:100%;" id="mapView1" src="${pageContext.request.contextPath}/resource/images/map sample.png">
-		 </div>
+	    	<div class="card">
+		 		<div class="card-header">
+				 	<span>차1 배정 환자</span>
+				 	<span class="card-header-sub" id="workingStatus1">[ 연결시도중 ]</span>
+				 </div>
+				 <div class="card-body" id="car1">
+					<div>
+						<table class="table align-items-center table-flush table-bordered">
+							<tbody>
+		                  	 <tr>
+									<td class="patientKey">환자 번호</td>
+									<td id="pno" class="patientValue">${patient1.pno}</td>
+								</tr>
+								<tr>
+									<td class="patientKey">신고 접수 시간</td>
+									<td id="preportTime" class="patientValue">${patient1.preportTime}</td>
+								</tr>
+								<tr>
+									<td class="patientKey">환자 위치</td>
+									<td id="plocation" class="patientValue">${patient1.plocation}</td>
+								</tr>
+								<tr>
+									<td class="patientKey">환자 이름</td>
+									<td id="pname" class="patientValue">${patient1.pname}</td>
+								</tr>
+								<tr>
+									<td class="patientKey">증상</td>
+									<td id="psymptom" class="patientValue">${patient1.psymptom}</td>
+								</tr>
+								<tr>
+									<td class="patientKey">혈액형</td>
+									<td id="pbloodType" class="patientValue">${patient1.pbloodType}</td>
+								</tr>
+								<tr>
+									<td class="patientKey">성별</td>
+									<td id="psex" class="patientValue">${patient1.psex}</td>
+								</tr>
+								<tr>
+									<td class="patientKey">나이</td>
+									<td id="page" class="patientValue">${patient1.page}</td>
+								</tr>
+								<tr>
+									<td class="patientKey">신고자 전화번호</td>
+									<td id="preportTel" class="patientValue">${patient1.preportTel}</td>
+								</tr>
+							</tbody>
+		                 </table>
+					</div>
+				 </div>
+			</div>
 		</div>
-	</div>
-
-	</div><!--End Row-->
 	
-	<div class="row">
-     <div class="col-12 col-lg-6 col-xl-6">
-	    <div class="card">
-		 <div class="card-header">차2 카메라 뷰</div>
-		 <div class="card-body" id="camera">
-			<!-- <img style="width:100%; height:100%;" id="cameraView2"> -->
-			<div>
-				<h4 id="workingStatus1">연결중</h4>
+		<div class="col-12 col-lg-6" id="car2">
+     		<div class="card">
+				<div class="card-header">차2 맵 뷰</div>
+				<div class="card-body" id="map">
+					<img style="width:100%; height:100%;" id="mapView2" src="${pageContext.request.contextPath}/resource/images/map sample.png">
+		 		</div>
 			</div>
-			<div>
-				<table class="table align-items-center table-flush table-bordered">
-					<tr>
-						<td class="patientKey">환자 번호</td>
-						<td class="patientValue">ㅎㅇㅎㅇㅎㅇ</td>
-					</tr>
-					<tr>
-						<td class="patientKey">11</td>
-						<td class="patientValue">111</td>
-					</tr>
-					<tr>
-						<td class="patientKey">qq</td>
-						<td class="patientValue">ㅂㅂㅂㅂ</td>
-					</tr>
-				</table>
-			</div>
-		 </div>
-		</div>
-	</div>
 		
-	<div class="col-12 col-lg-6 col-xl-6">
-		<div class="card">
-		 <div class="card-header">차2 맵 뷰</div>
-		 <div class="card-body" id="map">
-			<img style="width:100%; height:100%;" id="mapView2" src="${pageContext.request.contextPath}/resource/images/map sample.png">
-		 </div>
+			<div class="card">
+				<div class="card-header">
+		 			<span>차2 배정 환자</span>
+		 			<span class="card-header-sub" id="workingStatus2">[ 연결시도중 ]</span>
+				</div>
+				<div class="card-body" id="assignedPatient">
+					<div>
+						<table class="table align-items-center table-flush table-bordered">
+							<tbody>
+								<tr>
+									<td class="patientKey">환자 번호</td>
+									<td id="pno" class="patientValue">${patient2.pno}</td>
+								</tr>
+								<tr>
+									<td class="patientKey">신고 접수 시간</td>
+									<td id="preportTime" class="patientValue">${patient2.preportTime}</td>
+								</tr>
+								<tr>
+									<td class="patientKey">환자 위치</td>
+									<td id="plocation" class="patientValue">${patient2.plocation}</td>
+								</tr>
+								<tr>
+									<td class="patientKey">환자 이름</td>
+									<td id="pname" class="patientValue">${patient2.pname}</td>
+								</tr>
+								<tr>
+									<td class="patientKey">증상</td>
+									<td id="psymptom" class="patientValue">${patient2.psymptom}</td>
+								</tr>
+								<tr>
+									<td class="patientKey">혈액형</td>
+									<td id="pbloodType" class="patientValue">${patient2.pbloodType}</td>
+								</tr>
+								<tr>
+									<td class="patientKey">성별</td>
+									<td id="psex" class="patientValue">${patient2.psex}</td>
+								</tr>
+								<tr>
+									<td class="patientKey">나이</td>
+									<td id="page" class="patientValue">${patient2.page}</td>
+								</tr>
+								<tr>
+									<td class="patientKey">신고자 전화번호</td>
+									<td id="preportTel" class="patientValue">${patient2.preportTel}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				 </div>
+			</div>
 		</div>
-	</div>
-
 	</div><!--End Row-->
 	
       <!--End Dashboard Content-->

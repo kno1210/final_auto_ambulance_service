@@ -644,7 +644,7 @@ body.bg-theme15 {
   line-height: 60px;
   text-align: left;
   margin-left:5%;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2)
+  /* border-bottom: 1px solid rgba(255, 255, 255, 0.2) */
 }
 
 .logo-text{
@@ -782,6 +782,10 @@ body.bg-theme15 {
     font-weight: 600;
 	 font-size: 14px;
 	 color: #ffffff;
+}
+
+.card-header-sub {
+	padding-left: 0.75rem;
 }
 
 .card-title {
@@ -3369,6 +3373,14 @@ table.grid td {
   transition: all .5s;
 }
 
+#patientWaiting {
+	margin-top: 1rem; 
+	margin-bottom: 1rem;
+	margin-left:0.5rem;
+	font-size: 1.2rem;
+	font-weight: bold;
+}
+
 /* Extra css */
 
 .badge-top {
@@ -3531,6 +3543,7 @@ table.grid td {
     transition: all 0.2s ease;
 	box-shadow: none;
 }
+
 
 .toggle-menu i {
     line-height: 60px;

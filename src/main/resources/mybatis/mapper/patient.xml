@@ -14,6 +14,10 @@
 		select * from patient where pcarAssign=#{pcarAssign}
 	</select>
 	
+	<select id="selectTopPatientByPcarAssign" resultType="patient">
+		select * from patient where pcarAssign=#{pcarAssign} limit 1
+	</select>
+	
 	<select id="selectByPno" resultType="patient">
 		select * from patient where pno=#{pno}
 	</select>
