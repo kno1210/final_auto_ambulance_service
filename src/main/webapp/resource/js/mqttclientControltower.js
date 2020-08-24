@@ -5,7 +5,7 @@ var statuses = [
 		direction:"stop",
 		speed:0,
 		angle:0,
-		working:undefined
+		working:false
 	},
 	{
 		battery:0,
@@ -13,15 +13,15 @@ var statuses = [
 		direction:"stop",
 		speed:0,
 		angle:0,
-		working:undefined
+		working:false
 	}
 ];
 
 var waitingCnt = 0;
 
 $(function() {
-	client = new Paho.MQTT.Client(location.hostname, 61614, new Date().getTime().toString());
-//	client = new Paho.MQTT.Client("192.168.3.183", 61614, new Date().getTime().toString());
+//	client = new Paho.MQTT.Client(location.hostname, 61614, new Date().getTime().toString());
+	client = new Paho.MQTT.Client("192.168.3.183", 61614, new Date().getTime().toString());
 
 	client.onMessageArrived = onMessageArrived;
 
@@ -219,17 +219,18 @@ function onMessageArrived(message) {
 		
 		//대기목록이 없다면 바로 배정
 		if(waitingCnt == 0) { 
-			console.log("차:" + assignedCar);
-			console.log("목적지:" + patientInfo.plocation);
 			patientInfo.pcarAssign = assignCar();
+			console.log("*차:" + patientInfo.pcarAssign);
+			console.log("*목적지:" + patientInfo.plocation);
 			
 			//차에 목적지 전송
 			if(patientInfo.pcarAssign != "nothing") {
-				client.send(
-					createMessage(patientInfo.plocation, "car/" + patientInfo.pcarAssign + "/destination")
-				);
+//				client.send(
+//					createMessage(patientInfo.plocation, "car/" + patientInfo.pcarAssign + "/destination")
+//				);
 				console.log(patientInfo.plocation + "car/" + patientInfo.pcarAssign + "/destination");
 				console.log("차:" + statuses[patientInfo.pcarAssign-1].working);
+				sendDestination(patientInfo.plocation, patientInfo.pcarAssign);
 				
 				/*$("#car" + 1 + " " + "#pno").html(patient.pno);
 				$("#car" + 1 + " " + "#preportTime").html(patient.preportTime);
@@ -268,7 +269,7 @@ function onMessageArrived(message) {
 		var status = JSON.parse(message.payloadString);
 		var viewId = "car" + carNo;
 		statuses[carNo-1] = status;
-		console.log("차" + carNo + ":" + statuses[carNo-1].working);
+		console.log("**차" + carNo + ":" + statuses[carNo-1].working);
 		
 		if(statuses[carNo-1].working == true) {
 			document.getElementById("workingStatus" + String(carNo)).innerHTML = "[ 이송중 ]";
@@ -284,11 +285,13 @@ function onMessageArrived(message) {
 					data:{carNo:carNo, assignedCar:"nothing"},
 					success:function(data) {
 						var patient = data.patient;
-						var dest = data.patient.plocation;
-						console.log(data.patient);
-						if(dest != "null") { //nothing이 있다면
-							console.log("목적지:" + dest);
-							setTimeout(sendDestination, 3000, dest, "car/" + carNo + "/destination");
+						console.log(patient);
+						if(patient == "null") { patient = undefined; } //nothing이 없다면
+						else { //nothing이 있다면
+							var dest = patient.plocation;
+							console.log("**목적지:" + dest);
+							setTimeout(sendDestination, 3000, dest, carNo);
+//							sendDestination(dest, carNo);
 							
 							/*$("#car" + 1 + " " + "#pno").text(patient.pno);
 							$("#car" + 1 + " " + "#preportTime").text(patient.preportTime);
@@ -299,6 +302,18 @@ function onMessageArrived(message) {
 							$("#car" + 1 + " " + "#psex").text(patient.psex);
 							$("#car" + 1 + " " + "#page").text(patient.page);
 							$("#car" + 1 + " " + "#preportTel").text(patient.preportTel);*/
+							
+							$.ajax({
+								url:"updateCarAssign.do",
+								type:"POST",
+								data:patient,
+								success:function(data) {
+									console.log(data.result);
+								},
+								error:function() {
+									alert("** patientInfo.do **\nError");
+								}
+							});
 						}
 					},
 					error:function() {

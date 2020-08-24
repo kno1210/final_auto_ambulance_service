@@ -32,7 +32,10 @@ $(function(){
 
 	client.onMessageArrived = onMessageArrived;
 
-	client.connect({onSuccess:onConnect});
+	client.connect({
+		onSuccess:onConnect,
+		cleanSession:true
+	});
 	
 });
 

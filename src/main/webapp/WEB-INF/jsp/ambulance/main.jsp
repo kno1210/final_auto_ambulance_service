@@ -248,7 +248,7 @@
 	var patientLoc = "";
 	
 	patientLoc = document.getElementById("plocation").innerHTML;
-	var index2;
+	var index2 = 14;
 	
 	if(patientLoc == "A") {
 		index2 = 0;

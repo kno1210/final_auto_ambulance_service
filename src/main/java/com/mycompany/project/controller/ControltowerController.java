@@ -158,7 +158,7 @@ public class ControltowerController {
 		
 		controltowerService.savePatient(patient);
 		
-		String result = "ok";
+		String result = "save ok";
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("result", result);
 		response.setContentType("application/json; charset=UTF-8");
@@ -237,9 +237,28 @@ public class ControltowerController {
 		pw.close();
 	}
 	
-	@RequestMapping("/requestAssignPatientInfo.do")
-	public void requestAssignPatientInfo(HttpServletResponse response, String carNo)
+	@RequestMapping("/updateCarAssign.do")
+	public void requestAssignPatientInfo(HttpServletResponse response, @RequestParam Map<String, String> patientInfo) throws IOException
 	{
+		Patient patient = new Patient();
+		patient.setPreportTime(patientInfo.get("preportTime"));
+		patient.setPreportTel(patientInfo.get("preportTel"));
+		patient.setPlocation(patientInfo.get("plocation"));
+		patient.setPname(patientInfo.get("pname"));
+		patient.setPsymptom(patientInfo.get("psymptom"));
+		patient.setPsex(patientInfo.get("psex"));
+		patient.setPage(patientInfo.get("page"));
+		patient.setPbloodType(patientInfo.get("pbloodType"));
+		patient.setPcarAssign(patientInfo.get("pcarAssign"));
 		
+		controltowerService.updatePcarAssign(patient);
+		
+		JSONObject jsonObejct = new JSONObject();
+		jsonObejct.put("result", "update ok");
+		response.setContentType("application/json; charset=UTF-8");
+		PrintWriter pw = response.getWriter();
+		pw.write(jsonObejct.toString());
+		pw.flush();
+		pw.close();
 	}
 }
