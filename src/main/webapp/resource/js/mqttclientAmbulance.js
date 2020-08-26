@@ -37,6 +37,13 @@ $(function(){
 		cleanSession:true
 	});
 	
+	clientCam = new Paho.MQTT.Client("192.168.3.183", 61614, ipid + "c");
+	clientCam.onMessageArrived = onMessageArrivedCam;
+	
+	clientCam.connect({
+		onSuccess:onConnectCam,
+		cleanSession:true
+	});
 });
 
 $(document).ready(function() {
@@ -121,13 +128,29 @@ function onConnect() {
 		client.send(message);
 		j += 1;
 	}, 1000);*/
+	
+}
+
+function onConnectCam() {
+	clientCam.subscribe("cam/#");
+}
+
+function onMessageArrivedCam(message) {
+	//카메라 영상 출력=====================================================
+	if(message.destinationName == "cam/" + carNo + "/camera/frameLine") {
+		response(0);
+		lastSendtimearr[0] = Date.now();
+		//var cameraView = $("#cameraView").attr("src", "data:image/jpg;base64," + message.payloadString);
+		cam.src = "data:image/jpg;base64," + message.payloadString;
+//		console.log("토픽 : " + message.destinationName);
+	}
 }
 
 var movingPatient;
 function onMessageArrived(message) {
 //	console.log("message arrived");
 	if(message.destinationName == "/carAssign") {
-		$.ajax({
+		/*$.ajax({
 			url:"movingPatientInfo.do",
 			type:"POST",
 			success:function(data){
@@ -150,8 +173,8 @@ function onMessageArrived(message) {
 			error:function(){
 				window.alert("error");
 			}
-		})
-	}else if(message.destinationName == "/giveMeDispatchPossible") {
+		})*/
+	}/*else if(message.destinationName == "/giveMeDispatchPossible") {
 		console.log("message arrived : /giveMeDispatchPossible");
 		$.ajax({
 			url:"dispatchPossible.do",
@@ -174,15 +197,7 @@ function onMessageArrived(message) {
 				window.alert("ajax error (dispatchPossible.do)");
 			}
 		})
-	}
-	//카메라 영상 출력=====================================================
-	else if(message.destinationName == "ambulance/" + carNo + "/camera/frameLine") {
-		response(0);
-		lastSendtimearr[0] = Date.now();
-		//var cameraView = $("#cameraView").attr("src", "data:image/jpg;base64," + message.payloadString);
-		cam.src = "data:image/jpg;base64," + message.payloadString;
-//		console.log("토픽 : " + message.destinationName);
-	}
+	}*/
 	//=====================================================================
 	
 	//차 상태를 받는 토픽==================================================

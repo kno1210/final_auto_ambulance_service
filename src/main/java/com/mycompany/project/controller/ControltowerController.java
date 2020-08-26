@@ -203,7 +203,7 @@ public class ControltowerController {
 		else //assignedCar로 가져온게 있다면
 		{
 			//nothing을 carAssign 해서 업데이트
-			patient.setPcarAssign(carNo);
+//			patient.setPcarAssign(carNo);
 //			controltowerService.updatePcarAssign(patient);
 			
 			//patient 응답
@@ -240,15 +240,8 @@ public class ControltowerController {
 	@RequestMapping("/updateCarAssign.do")
 	public void requestAssignPatientInfo(HttpServletResponse response, @RequestParam Map<String, String> patientInfo) throws IOException
 	{
-		Patient patient = new Patient();
-		patient.setPreportTime(patientInfo.get("preportTime"));
-		patient.setPreportTel(patientInfo.get("preportTel"));
-		patient.setPlocation(patientInfo.get("plocation"));
-		patient.setPname(patientInfo.get("pname"));
-		patient.setPsymptom(patientInfo.get("psymptom"));
-		patient.setPsex(patientInfo.get("psex"));
-		patient.setPage(patientInfo.get("page"));
-		patient.setPbloodType(patientInfo.get("pbloodType"));
+		Patient patient = null;
+		patient = controltowerService.getPatientByPno(Integer.parseInt(patientInfo.get("pno")));
 		patient.setPcarAssign(patientInfo.get("pcarAssign"));
 		
 		controltowerService.updatePcarAssign(patient);

@@ -5,7 +5,7 @@ var statuses = [
 		direction:"stop",
 		speed:0,
 		angle:0,
-		working:false
+		working:undefined
 	},
 	{
 		battery:0,
@@ -13,7 +13,7 @@ var statuses = [
 		direction:"stop",
 		speed:0,
 		angle:0,
-		working:false
+		working:undefined
 	}
 ];
 
@@ -303,15 +303,18 @@ function onMessageArrived(message) {
 							$("#car" + 1 + " " + "#page").text(patient.page);
 							$("#car" + 1 + " " + "#preportTel").text(patient.preportTel);*/
 							
+//							setTimeout(sendDestination, 500, dest, carNo);
+							patient.pcarAssign = carNo;
 							$.ajax({
 								url:"updateCarAssign.do",
 								type:"POST",
+								async:false,
 								data:patient,
 								success:function(data) {
 									console.log(data.result);
 								},
 								error:function() {
-									alert("** patientInfo.do **\nError");
+									alert("** updateCarAssign.do **\nError");
 								}
 							});
 						}
